@@ -22,8 +22,9 @@ jobs:
 
       - name: Flutter Pub Get
         run: flutter pub get
+        working-directory: toxic_floor_sprayer_3000_pro
 
-      - name: Run Dart Analysis
-        uses: invertase/github-action-dart-analyzer@main
-        with:
-          fatal-infos: true
+      - name: Dart Analyzer
+        run: dart analyze --fatal-infos
+        working-directory: toxic_floor_sprayer_3000_pro
+
