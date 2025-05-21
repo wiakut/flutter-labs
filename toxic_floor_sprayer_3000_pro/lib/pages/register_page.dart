@@ -5,8 +5,61 @@ import 'package:toxic_floor_sprayer_3000_pro/widgets/toxic_app_bar.dart';
 import 'package:toxic_floor_sprayer_3000_pro/widgets/toxic_button.dart';
 import 'package:toxic_floor_sprayer_3000_pro/widgets/toxic_text_field.dart';
 
-class RegisterPage extends StatelessWidget {
+import 'package:toxic_floor_sprayer_3000_pro/core/storage/user_storage_impl.dart';
+import 'package:toxic_floor_sprayer_3000_pro/domain/repositories/user_repository_impl.dart';
+import 'package:toxic_floor_sprayer_3000_pro/data/models/user_model.dart';
+import 'package:toxic_floor_sprayer_3000_pro/features/auth/auth_controller.dart';
+
+class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
+
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
+  late final AuthController _authController;
+  String? _errorText;
+
+  @override
+  void initState() {
+    super.initState();
+    _authController = AuthController(
+      UserRepositoryImpl(UserStorageImpl()),
+    );
+  }
+
+  void _register() async {
+    setState(() => _errorText = null);
+
+    if (_passwordController.text != _confirmPasswordController.text) {
+      setState(() => _errorText = 'Passwords do not match');
+      return;
+    }
+
+    final user = UserModel(
+      name: _usernameController.text.trim(),
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+    );
+
+    final error = await _authController.register(user);
+    if (error != null) {
+      setState(() => _errorText = error);
+      return;
+    }
+
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const HomePage()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +71,7 @@ class RegisterPage extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
+              const Text(
                 'Create an Account',
                 style: TextStyle(
                   fontSize: 24,
@@ -26,59 +79,66 @@ class RegisterPage extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
+
+              if (_errorText != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Text(
+                    _errorText!,
+                    style: const TextStyle(color: Colors.redAccent),
+                  ),
+                ),
 
               ToxicTextField(
                 label: 'Username',
                 hint: 'Enter your username',
+                controller: _usernameController,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               ToxicTextField(
                 label: 'Email',
                 hint: 'Enter your email',
+                controller: _emailController,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               ToxicTextField(
                 label: 'Password',
                 hint: 'Enter your password',
+                controller: _passwordController,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               ToxicTextField(
                 label: 'Confirm Password',
                 hint: 'Repeat your password',
+                controller: _confirmPasswordController,
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
 
               ToxicButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                  );
-                },
-                text: 'Register'
+                onPressed: _register,
+                text: 'Register',
               ),
-              SizedBox(height: 20),
-              // Посилання на сторінку входу
+              const SizedBox(height: 20),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'Already have an account? ',
                     style: TextStyle(color: Colors.white),
                   ),
                   GestureDetector(
                     onTap: () {
-                      // Перехід на сторінку входу
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        MaterialPageRoute(builder: (_) => const LoginPage()),
                       );
                     },
-                    child: Text(
+                    child: const Text(
                       'Login',
                       style: TextStyle(color: Colors.yellowAccent),
                     ),

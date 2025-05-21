@@ -5,8 +5,50 @@ import 'package:toxic_floor_sprayer_3000_pro/widgets/toxic_app_bar.dart';
 import 'package:toxic_floor_sprayer_3000_pro/widgets/toxic_button.dart';
 import 'package:toxic_floor_sprayer_3000_pro/widgets/toxic_text_field.dart';
 
-class LoginPage extends StatelessWidget {
+import 'package:toxic_floor_sprayer_3000_pro/core/storage/user_storage_impl.dart';
+import 'package:toxic_floor_sprayer_3000_pro/domain/repositories/user_repository_impl.dart';
+import 'package:toxic_floor_sprayer_3000_pro/features/auth/auth_controller.dart';
+
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  late final AuthController _authController;
+  String? _errorText;
+
+  @override
+  void initState() {
+    super.initState();
+    _authController = AuthController(
+      UserRepositoryImpl(UserStorageImpl()),
+    );
+  }
+
+  void _login() async {
+    setState(() => _errorText = null);
+
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    final error = await _authController.login(email, password);
+    if (error != null) {
+      setState(() => _errorText = error);
+      return;
+    }
+
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const HomePage()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +60,7 @@ class LoginPage extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
+              const Text(
                 'Login',
                 style: TextStyle(
                   fontSize: 24,
@@ -26,34 +68,41 @@ class LoginPage extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
+
+              if (_errorText != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Text(
+                    _errorText!,
+                    style: const TextStyle(color: Colors.redAccent),
+                  ),
+                ),
 
               ToxicTextField(
-                label: 'Username',
-                hint: 'Enter your username',
+                label: 'Email',
+                hint: 'Enter your email',
+                controller: _emailController,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               ToxicTextField(
                 label: 'Password',
                 hint: 'Enter your password',
+                controller: _passwordController,
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
 
               ToxicButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                  );
-                },
+                onPressed: _login,
                 text: 'Login',
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'Don\'t have an account? ',
                     style: TextStyle(color: Colors.white),
                   ),
@@ -61,10 +110,10 @@ class LoginPage extends StatelessWidget {
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => RegisterPage()),
+                        MaterialPageRoute(builder: (_) => const RegisterPage()),
                       );
                     },
-                    child: Text(
+                    child: const Text(
                       'Sign Up',
                       style: TextStyle(color: Colors.yellowAccent),
                     ),
