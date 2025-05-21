@@ -1,66 +1,53 @@
-# Flutter & Dart
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.packages
-.pub-cache/
-build/
-.idea/
-.melos_tool/
+# === Dart & Flutter ===
+**/.dart_tool/
+**/.packages
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/build/
+**/pubspec.lock
+**/coverage/
 
-# iOS
-ios/Flutter/Flutter.framework
-ios/Flutter/Flutter.podspec
-ios/Flutter/App.framework
-ios/.symlinks/
-ios/Pods/
-ios/Runner.xcworkspace/
-ios/DerivedData/
-ios/.dart_tool/
-ios/.generated/
+# === iOS/macOS specific ===
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Runner.xcworkspace/
+**/ios/DerivedData/
 
-# Android
-android/.gradle/
-android/captures/
-android/.idea/
-android/local.properties
-android/.dart_tool/
-android/build/
+**/macos/Pods/
+**/macos/.symlinks/
+**/macos/Flutter/GeneratedPluginRegistrant.swift
+**/macos/build/
+**/macos/Runner.xcworkspace/
+**/macos/.dart_tool/
 
-# macOS
-macos/Flutter/GeneratedPluginRegistrant.swift
-macos/Pods/
-macos/.symlinks/
-macos/build/
-macos/Runner.xcworkspace/
-macos/.dart_tool/
+# === Android specific ===
+**/android/.gradle/
+**/android/.idea/
+**/android/local.properties
+**/android/captures/
+**/android/build/
 
-# Web
-web/.dart_tool/
-web/build/
+# === Windows & Linux (just in case) ===
+**/windows/build/
+**/windows/.dart_tool/
+**/linux/build/
+**/linux/.dart_tool/
 
-# Windows (на випадок, якщо клонуватимеш проект на Win)
-windows/build/
-windows/.dart_tool/
+# === Web build (optional) ===
+**/web/build/
+**/web/.dart_tool/
 
-# Linux (так само)
-linux/build/
-linux/.dart_tool/
+# === VS Code ===
+**/.vscode/
+**/.history/
 
-# VS Code
-.vscode/
-.history/
+# === JetBrains / IntelliJ ===
+**/.idea/
+**/*.iml
 
-# System
-.DS_Store
-Icon?
-.idea/
-*.iml
-*.log
-*.tmp
-
-# Coverage
-coverage/
-
-# Packages
-pubspec.lock
+# === macOS System files ===
+**/.DS_Store
+**/Icon?
