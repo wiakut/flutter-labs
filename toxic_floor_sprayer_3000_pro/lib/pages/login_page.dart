@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:toxic_floor_sprayer_3000_pro/core/services/network_service.dart';
 import 'package:toxic_floor_sprayer_3000_pro/pages/home_page.dart';
 import 'package:toxic_floor_sprayer_3000_pro/pages/register_page.dart';
 import 'package:toxic_floor_sprayer_3000_pro/widgets/toxic_app_bar.dart';
@@ -31,8 +32,33 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  void _showNoInternetWarning(){
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('No internet connection'),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  void _navigateToHome(){
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const HomePage()),
+    );
+  }
+
   void _login() async {
-    setState(() => _errorText = null);
+    final networkService = NetworkService();
+    final isOnline = await networkService.isConnected();
+
+    if (!isOnline) {
+      if (!context.mounted) return;
+      
+      _showNoInternetWarning();
+
+      return;
+    }
 
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
@@ -43,11 +69,9 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    if (!mounted) return;
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const HomePage()),
-    );
+    if (!context.mounted) return;
+    
+    _navigateToHome();
   }
 
   @override
