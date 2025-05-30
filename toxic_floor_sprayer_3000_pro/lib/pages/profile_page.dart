@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:toxic_floor_sprayer_3000_pro/core/storage/user_storage_impl.dart';
 import 'package:toxic_floor_sprayer_3000_pro/domain/repositories/user_repository_impl.dart';
 import 'package:toxic_floor_sprayer_3000_pro/data/models/user_model.dart';
+import 'package:toxic_floor_sprayer_3000_pro/pages/login_page.dart';
 import 'package:toxic_floor_sprayer_3000_pro/widgets/toxic_app_bar.dart';
 import 'package:toxic_floor_sprayer_3000_pro/widgets/toxic_button.dart';
 import 'package:toxic_floor_sprayer_3000_pro/widgets/toxic_text_field.dart';
@@ -97,6 +98,60 @@ class _ProfilePageState extends State<ProfilePage> {
                   text: 'Save',
                 ),
               ),
+
+              const SizedBox(height: 20),
+
+              Center(
+                child: ToxicButton(
+                  text: 'Delete User',
+                  backgroundColor: Colors.redAccent,
+                  foregroundColor: Colors.black,
+                  onPressed: () async {
+                    final confirmed = await showDialog<bool>(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        backgroundColor: Colors.black,
+                        title: const Text(
+                          'Confirm Deletion',
+                          style: TextStyle(color: Colors.redAccent),
+                        ),
+                        content: const Text(
+                          'Are you sure you want to delete this user? This action cannot be undone.',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        actions: [
+                          ToxicButton(
+                            text: 'Cancel',
+                            onPressed: () => Navigator.pop(ctx, false),
+                            backgroundColor: Colors.grey,
+                            foregroundColor: Colors.white,
+                            minimumSize: const Size(100, 40),
+                          ),
+                          ToxicButton(
+                            text: 'Delete',
+                            onPressed: () => Navigator.pop(ctx, true),
+                            backgroundColor: Colors.redAccent,
+                            foregroundColor: Colors.black,
+                            minimumSize: const Size(100, 40),
+                          ),
+                        ],
+                      ),
+                    );
+
+                    if (confirmed == true) {
+                      final repo = UserRepositoryImpl(UserStorageImpl());
+                      await repo.deleteUser();
+                      if (!context.mounted) return;
+                      Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoginPage()),
+                      (route) => false,
+                    );
+                    }
+                  },
+                ),
+              ),
+
             ],
           ),
         ),
