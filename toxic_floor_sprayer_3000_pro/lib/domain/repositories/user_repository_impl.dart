@@ -8,15 +8,36 @@ class UserRepositoryImpl implements UserRepository {
   UserRepositoryImpl(this.storage);
 
   @override
-  Future<void> registerUser(UserModel user) async {
+  Future<String?> registerUser(UserModel user) async {
+    if (user.email.isEmpty || user.password.isEmpty) {
+      return 'Email and password are required';
+    }
+
+    final existingUser = await storage.getUser();
+    if (existingUser != null) {
+      return 'User already registered';
+    }
+
     await storage.saveUser(user);
+    return null; // успіх
   }
 
   @override
-  Future<bool> login(String email, String password) async {
+  Future<String?> login(String email, String password) async {
+    if (email.isEmpty || password.isEmpty) {
+      return 'Email and password are required';
+    }
+
     final user = await storage.getUser();
-    if (user == null) return false;
-    return user.email == email && user.password == password;
+    if (user == null) {
+      return 'User not found';
+    }
+
+    if (user.email != email || user.password != password) {
+      return 'Invalid credentials';
+    }
+
+    return null; // успіх
   }
 
   @override
